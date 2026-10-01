@@ -7,13 +7,11 @@ const ICON_URL =
     : "./icons/icon.svg";
 
 TrelloPowerUp.initialize({
-  // Trello queries this capability to decide whether to prompt the member to authorize
   "authorization-status": async function (t) {
     const authorized = await isAuthorized(t);
     return { authorized };
   },
 
-  // Called when Trello prompts authorization
   "show-authorization": function (t) {
     return t.popup({
       title: "Authorize Reusable Checklist Library",
@@ -22,7 +20,6 @@ TrelloPowerUp.initialize({
     });
   },
 
-  // Called when member opens Power-Up settings from the board menu
   "show-settings": function (t) {
     return t.popup({
       title: "Reusable Checklist Library Settings",
@@ -31,7 +28,6 @@ TrelloPowerUp.initialize({
     });
   },
 
-  // Adds an Reusable Checklist Library button in the top board header
   "board-buttons": function () {
     return [
       {
@@ -42,6 +38,7 @@ TrelloPowerUp.initialize({
         text: "Reusable Checklist Library",
         callback: async function (t) {
           const authorized = await isAuthorized(t);
+
           if (!authorized) {
             return t.popup({
               title: "Authorize Reusable Checklist Library",
@@ -50,7 +47,6 @@ TrelloPowerUp.initialize({
             });
           }
 
-          // Once authorized, alert or open the main Reusable Checklist Library feature modal when ready
           return t.popup({
             title: "Reusable Checklist Library",
             url: "./checklists.html",
@@ -59,5 +55,19 @@ TrelloPowerUp.initialize({
         },
       },
     ];
+  },
+
+  "card-back-section": function (t) {
+    return {
+      title: "Checklist Templates",
+      icon: ICON_URL,
+      content: {
+        type: "iframe",
+        url: t.signUrl(
+          `${window.location.origin}/checklists.html`
+        ),
+        height: 600,
+      },
+    };
   },
 });
